@@ -33,9 +33,9 @@ uso_:
 
 ## Contributors:
 
-- Apellido1 Apellido2, Nombre : github username : udc username
-- Apellido1 Apellido2, Nombre : github username : udc username
-- Apellido1 Apellido2, Nombre : github username : udc username
+- Álvarez Nieto, Carlos : carlosAlvarez2 : c.alvarez2
+- Capón Gómez, Andrés : andrescapon : andres.capon
+- Díaz Préstamo, Xoel : xxoel : xoel.diaz
 
 
 ## Welcome :wave:
