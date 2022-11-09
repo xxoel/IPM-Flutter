@@ -6,8 +6,8 @@ import 'package:http/http.dart' as http;
 const API_URL = "api.edamam.com";
 const ENDPOINT = "api/recipes/v2";
 const TYPE = "public";
-const APP_ID = "my_api_id";
-const APP_KEY = "my_api_key";
+const APP_ID = "85df9e8f";
+const APP_KEY = "7d49f8c1632bf0907a206875a2e54b4b";
 
 class Nutrient {
   String label;
