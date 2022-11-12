@@ -48,21 +48,78 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  TextEditingController editingController = TextEditingController();
 
-  void _incrementCounter() {
+  final _items = List<String>.generate(100, (i) => "Søgetekst $i");
+  List<String> _itemsSuggestions = [];
+
+  void searchResults(String query) {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter+=2;
+      _itemsSuggestions = _items
+          .where((data) => data.toLowerCase().contains(query.toLowerCase()))
+          .toList();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    Widget searchBar = Container(
+      margin: const EdgeInsets.only(top: 100, left: 80, right: 80,bottom: 100),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget> [
+          Image.asset(
+              'assets/edamam.png',
+              width: 200,
+              height: 200,
+              fit:BoxFit.fill
+          ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                    onChanged: (value) => searchResults(value),
+                    onSubmitted: (value) {
+                      setState(() {
+                        _itemsSuggestions=[];
+                      });
+                      print(value);
+                    },
+                    controller: editingController,
+                    decoration: InputDecoration(
+                        isDense: true,
+                        labelText:"Introduzca los datos",
+                        hintText: "Recetas",
+                        prefixIcon: IconButton(
+                          icon: Icon(Icons.arrow_back),
+                          onPressed: () {},
+                        ),
+                        suffixIcon: IconButton(
+                            icon: Icon(Icons.clear),
+                            onPressed: () {
+                              setState(() {
+                                editingController.text= '';
+                              });
+                            }),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10.0),
+                            )
+                        )
+                    )
+                ),
+              )
+            ],
+          ),
+      );
+    Color color = Theme.of(context).primaryColor;
+
+    Widget buttonSection = Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildButtonColumn(color, Icons.help, 'HELP'),
+        _buildButtonColumn(color, Icons.settings, 'OPT'),
+      ],
+    );
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -93,23 +150,40 @@ class _MyHomePageState extends State<MyHomePage> {
           // center the children vertically; the main axis here is the vertical
           // axis because Columns are vertical (the cross axis would be
           // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'HOLA:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline1,
-            ),
-          ],
+          mainAxisAlignment: MainAxisAlignment.start,
+
+          children: [searchBar,buttonSection]
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+}
+
+Column _buildButtonColumn(Color color, IconData icon, String label) {
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      InkWell(
+      child: Icon(icon,color: color,size: 80.0),
+      onTap: (){
+        if(label == "OPT")
+        print("HOLA");
+        if(label == "HELP")
+          print("GAAAAAAAAAS");
+      },
+      ),
+      Container(
+        margin: const EdgeInsets.only(top: 8),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w800,
+            color: color,
+          ),
+        ),
+      ),
+    ],
+  );
 }
