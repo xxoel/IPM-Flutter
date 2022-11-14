@@ -82,7 +82,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       setState(() {
                         _itemsSuggestions=[];
                       });
-                      print(value);
                     },
                     controller: editingController,
                     decoration: InputDecoration(
@@ -90,17 +89,17 @@ class _MyHomePageState extends State<MyHomePage> {
                         labelText:"Introduzca los datos",
                         hintText: "Recetas",
                         prefixIcon: IconButton(
-                          icon: Icon(Icons.arrow_back),
+                          icon: const Icon(Icons.arrow_back),
                           onPressed: () {},
                         ),
                         suffixIcon: IconButton(
-                            icon: Icon(Icons.clear),
+                            icon: const Icon(Icons.clear),
                             onPressed: () {
                               setState(() {
                                 editingController.text= '';
                               });
                             }),
-                        border: OutlineInputBorder(
+                        border: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(
                               Radius.circular(10.0),
                             )
@@ -116,8 +115,8 @@ class _MyHomePageState extends State<MyHomePage> {
     Widget buttonSection = Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        _buildButtonColumn(color, Icons.help, 'HELP'),
-        _buildButtonColumn(color, Icons.settings, 'OPT'),
+        _buildButtonColumn(color, Icons.help, 'HELP',context),
+        _buildButtonColumn(color, Icons.settings, 'OPT',context),
       ],
     );
     // This method is rerun every time setState is called, for instance as done
@@ -159,7 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-Column _buildButtonColumn(Color color, IconData icon, String label) {
+Column _buildButtonColumn(Color color, IconData icon, String label,BuildContext context) {
   return Column(
     mainAxisSize: MainAxisSize.min,
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -167,10 +166,12 @@ Column _buildButtonColumn(Color color, IconData icon, String label) {
       InkWell(
       child: Icon(icon,color: color,size: 80.0),
       onTap: (){
-        if(label == "OPT")
-        print("HOLA");
-        if(label == "HELP")
-          print("GAAAAAAAAAS");
+        if(label == "OPT") {
+          print("HOLA");
+        }
+        if(label == "HELP") {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const VentanaAyuda()),
+          );}
       },
       ),
       Container(
@@ -186,4 +187,25 @@ Column _buildButtonColumn(Color color, IconData icon, String label) {
       ),
     ],
   );
+}
+
+class VentanaAyuda extends StatelessWidget {
+  const VentanaAyuda({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('VENTANA'),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('RETORNO'),
+        ),
+      ),
+    );
+  }
 }
