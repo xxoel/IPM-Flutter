@@ -167,8 +167,8 @@ Column _buildButtonColumn(Color color, IconData icon, String label,BuildContext 
       child: Icon(icon,color: color,size: 80.0),
       onTap: (){
         if(label == "OPT") {
-          print("HOLA");
-        }
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const VentanaOpciones()),
+          );}
         if(label == "HELP") {
           Navigator.push(context, MaterialPageRoute(builder: (context) => const VentanaAyuda()),
           );}
@@ -196,14 +196,35 @@ class VentanaAyuda extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('VENTANA'),
+        title: const Text('VentanaAyuda'),
       ),
       body: Center(
         child: ElevatedButton(
           onPressed: () {
             Navigator.pop(context);
           },
-          child: const Text('RETORNO'),
+          child: const Text('Volver'),
+        ),
+      ),
+    );
+  }
+}
+
+class VentanaOpciones extends StatelessWidget {
+  const VentanaOpciones({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('VentanaOpciones'),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('Volver'),
         ),
       ),
     );
