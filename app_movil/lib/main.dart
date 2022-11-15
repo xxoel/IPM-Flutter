@@ -80,6 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     onChanged: (value) => searchResults(value),
                     onSubmitted: (value) {
                       setState(() {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const VentanaBusqueda()),);
                         _itemsSuggestions=[];
                       });
                     },
@@ -226,6 +227,27 @@ class VentanaOpciones extends StatelessWidget {
           },
           child: const Text('Volver'),
         ),
+      ),
+    );
+  }
+}
+
+class VentanaBusqueda extends StatelessWidget {
+  const VentanaBusqueda({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('VentanaBusqueda'),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child:const Text('Volver'),
+        )
       ),
     );
   }
