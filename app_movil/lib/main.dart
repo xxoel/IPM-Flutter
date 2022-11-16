@@ -48,7 +48,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  TextEditingController editingController = TextEditingController();
+  final _text = TextEditingController();
+  bool _validate = false;
+
+  @override
+  void dispose(){
+    _text.dispose();
+    super.dispose();
+  }
 
   final _items = List<String>.generate(100, (i) => "Søgetekst $i");
   List<String> _itemsSuggestions = [];
@@ -83,27 +90,33 @@ class _MyHomePageState extends State<MyHomePage> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(
+                    controller : _text,
                     onChanged: (value) => searchResults(value),
                     onSubmitted: (value) {
                       setState(() {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const VentanaBusqueda()),);
+                        _text.text.isEmpty ? _validate = true : _validate = false;
+                        if(!_validate) {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const VentanaBusqueda()),);
+                        }
                         _itemsSuggestions=[];
                       });
                     },
-                    controller: editingController,
                     decoration: InputDecoration(
                         isDense: true,
+                        errorText: _validate ? 'EL CAMPO NO PUEDE ESTAR VACIO': null,
                         labelText:"Introduzca los datos",
                         hintText: "Recetas",
                         prefixIcon: IconButton(
                           icon: const Icon(Icons.arrow_back),
-                          onPressed: () {},
+                          onPressed: () {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                          },
                         ),
                         suffixIcon: IconButton(
                             icon: const Icon(Icons.clear),
                             onPressed: () {
+                              _text.clear();
                               setState(() {
-                                editingController.text= '';
                               });
                             }),
                         border: const OutlineInputBorder(
@@ -114,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     )
                 ),
               )
-            ],
+              ],
           ),
       );
     Color color = Theme.of(context).primaryColor;
