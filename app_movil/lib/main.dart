@@ -69,9 +69,15 @@ class _MyHomePageState extends State<MyHomePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget> [
           Image.asset(
+              'assets/chef.png',
+                width: 150,
+                height: 150,
+                fit: BoxFit.fill
+          ),
+          Image.asset(
               'assets/edamam.png',
-              width: 200,
-              height: 200,
+              width: 150,
+              height: 150,
               fit:BoxFit.fill
           ),
               Padding(
@@ -152,7 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.start,
 
-          children: [searchBar,buttonSection]
+          children: [searchBar,Expanded(child: buttonSection)]
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
@@ -200,13 +206,40 @@ class VentanaAyuda extends StatelessWidget {
         title: const Text('VentanaAyuda'),
       ),
       body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text('Volver'),
-        ),
+        child:
+            Container(
+              color: Colors.white,
+            child:
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(
+                  height: 300,
+                ),
+                  const TextField(
+                    enabled: false,
+                    maxLines: 6,
+                    minLines: 6,
+                    style: TextStyle(color:Colors.white,fontSize: 22,height: 2.0),
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'En esta pestaña se mostrará como usar la aplicación de búsqueda de recetas.'
+                            'Deberás introducir la palabra clave sobre la cual deseas obtener recetas que la contengan '
+                            'en la barra de búsqueda, y una vez hecho esto, presionar la tecla ENTER. '
+                            'El sistema se encargará de mostrarte las recetas que contienen esa palabra clave, o el error '
+                            'correspondiente. !Muchas gracias por usar nuestra aplicación!'
+                    ),
+                  ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Volver'),
+                )
+                ],
+            )
       ),
+    )
     );
   }
 }
@@ -218,17 +251,59 @@ class VentanaOpciones extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        foregroundColor: Colors.black87,
         title: const Text('VentanaOpciones'),
       ),
       body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text('Volver'),
-        ),
-      ),
-    );
+        child:Column(
+          children: [const TextField(
+            textAlign: TextAlign.center,
+            enabled: false,
+          style: TextStyle(color:Colors.white,fontSize: 22,height: 2.0),
+          decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              hintText: 'Bienvenido a la pestaña de Opciones'
+          )
+          )
+            ,const SizedBox(
+            height: 250,
+          ),
+            Image.asset(
+              'assets/pingu.png',
+              width: 250,
+              height: 250,
+              fit: BoxFit.fill),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [ButtonBar(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget> [
+                    const SizedBox(
+                      height: 200,
+                    ),
+                    const ElevatedButton(
+                        onPressed: null,
+                        child: Text(
+                            'Cambiar Tema'
+                        )),
+                    const ElevatedButton(
+                      onPressed: null,
+                      child: Text(
+                          'Cambiar Fuente'
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Volver'),
+                    )
+                  ],
+                ),
+              ])],
+        )
+    ));
   }
 }
 
