@@ -1,27 +1,29 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart';
+import 'package:app_movil/edamam.dart';
 import 'package:flutter/material.dart';
 
 void main() {
   runApp(const MyApp());
 }
-
+Future<RecipeBlock?> fetchRecipe(query) async {
+  final response = await get(Uri.parse(API_URL));
+  if (response.statusCode == 200) {
+    return search_recipes(query);
+  }
+  else {
+    throw Exception("NOOO");
+  }
+}
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Recipe App',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.deepPurple,
       ),
       home: const MyHomePage(title: 'Edaman Recipe Seeker'),
@@ -32,15 +34,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -48,9 +41,16 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late Future<RecipeBlock?> recetas;
   final _text = TextEditingController();
+  double _brightness = 1.0;
   bool _validate = false;
 
+  @override
+  void initState(){
+    super.initState();
+    recetas = fetchRecipe("rice");
+  }
   @override
   void dispose(){
     _text.dispose();
@@ -67,77 +67,71 @@ class _MyHomePageState extends State<MyHomePage> {
           .toList();
     });
   }
-Widget makeSearchBar() {
-  Widget searchBar = Container(
-    margin: const EdgeInsets.only(top: 100, left: 80, right: 80, bottom: 100),
-            child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Image.asset(
-            'assets/chef.png',
-            width: 150,
-            height: 150,
-            fit: BoxFit.fill
-        ),
-        Image.asset(
-            'assets/edamam.png',
-            width: 150,
-            height: 150,
-            fit: BoxFit.fill
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextField(
-              controller: _text,
-              onChanged: (value) => searchResults(value),
-              onSubmitted: (value) {
-                setState(() {
-                  /*bool conexion = false;
-                        try{
-                          final result = await InternetAddress.lookup('www.google.com');
-                          if(result.isNotEmpty && result[0].rawAddress.isNotEmpty){
-                            conexion = true;
-                          }
-                        }
-                        on SocketException catch (_){}*/
-                  _text.text.isEmpty ? _validate = true : _validate = false;
-                  if (!_validate) {
-                    Navigator.push(context, MaterialPageRoute(
-                        builder: (context) => const VentanaBusqueda()),);
-                  }
-                  _itemsSuggestions = [];
-                });
-              },
-              decoration: InputDecoration(
-                  isDense: true,
-                  errorText: _validate ? 'EL CAMPO NO PUEDE ESTAR VACIO' : null,
-                  labelText: "Introduzca los datos",
-                  hintText: "Recetas",
-                  prefixIcon: IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: () {
-                      FocusManager.instance.primaryFocus?.unfocus();
-                    },
-                  ),
-                  suffixIcon: IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        _text.clear();
-                        setState(() {});
-                      }),
-                  border: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10.0),
-                      )
-                  )
-              )
+  Widget makeSearchBar() {
+    Widget searchBar = Container(
+      margin: const EdgeInsets.only(top: 100, left: 80, right: 80, bottom: 100),
+              child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Image.asset(
+              'assets/pinguino.jpeg',
+              width: 250,
+             height: 250,
+             fit: BoxFit.fill
           ),
-        )
-      ],
-    ),
-  );
-  return searchBar;
-}
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+           child: TextField(
+                controller: _text,
+                onChanged: (value) => searchResults(value),
+                onSubmitted: (value) {
+                  setState(()  {
+                    _text.text.isEmpty ? _validate = true : _validate = false;
+                   if (!_validate) {
+                     Future<RecipeBlock?> listaRecetas=  search_recipes(_text.text).then((value) {
+                       if (value?.count == 0){
+                         Navigator.push(context, MaterialPageRoute(builder: (context) => const VentanaBusquedaNoEncontrada()));
+                       }
+                       else {
+                         Navigator.push(context, MaterialPageRoute(
+                             builder: (context) => const VentanaBusqueda()),);
+                       }
+                     },
+                     );
+                    }
+                   _itemsSuggestions = [];
+                  });
+               },
+                decoration: InputDecoration(
+                    isDense: true,
+                    errorText: _validate ? 'EL CAMPO NO PUEDE ESTAR VACIO' : null,
+                    labelText: "Introduzca los datos",
+                    hintText: "Recetas",
+                    prefixIcon: IconButton(
+                     icon: const Icon(Icons.arrow_back),
+                      onPressed: () {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                     },
+                    ),
+                    suffixIcon: IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          _text.clear();
+                         setState(() {});
+                        }),
+                   border: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10.0),
+                       )
+                   )
+               )
+            ),
+         )
+        ],
+     ),
+    );
+    return searchBar;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -153,13 +147,9 @@ Widget makeSearchBar() {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
           child:Expanded(
             child: SingleChildScrollView(
               child: Column(
@@ -173,36 +163,40 @@ Widget makeSearchBar() {
   }
 }
 
-Column _buildButtonColumn(Color color, IconData icon, String label,BuildContext context) {
-  return Column(
-    mainAxisSize: MainAxisSize.min,
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      InkWell(
-      child: Icon(icon,color: color,size: 80.0),
-      onTap: (){
-        if(label == "OPT") {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const VentanaOpciones()),
-          );}
-        if(label == "HELP") {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const VentanaAyuda()),
-          );}
-      },
-      ),
-      Container(
-        margin: const EdgeInsets.only(top: 8),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w800,
-            color: color,
+  Column _buildButtonColumn(Color color, IconData icon, String label,BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        InkWell(
+          child: Icon(icon, color: color, size: 80.0),
+          onTap: () {
+            if (label == "OPT") {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => const VentanaOpciones()),
+              );
+            }
+            if (label == "HELP") {
+              Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const VentanaAyuda()),
+              );
+            }
+          },
+        ),
+        Container(
+          margin: const EdgeInsets.only(top: 8),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+              color: color,
+            ),
           ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
 class VentanaAyuda extends StatelessWidget {
   const VentanaAyuda({super.key});
@@ -224,7 +218,8 @@ class VentanaAyuda extends StatelessWidget {
                 const SizedBox(
                   height: 300,
                 ),
-                  const TextField(
+                  const Expanded(
+                    child: TextField(
                     enabled: false,
                     maxLines: 6,
                     minLines: 6,
@@ -237,6 +232,7 @@ class VentanaAyuda extends StatelessWidget {
                             'El sistema se encargará de mostrarte las recetas que contienen esa palabra clave, o el error '
                             'correspondiente. !Muchas gracias por usar nuestra aplicación!'
                     ),
+                  )
                   ),
                 ElevatedButton(
                   onPressed: () {
@@ -245,13 +241,12 @@ class VentanaAyuda extends StatelessWidget {
                   child: const Text('Volver'),
                 )
                 ],
-            )
+              ))
       ),
     )
-    );
+    ;
   }
 }
-
 class VentanaOpciones extends StatelessWidget {
   const VentanaOpciones({super.key});
 
@@ -274,10 +269,10 @@ class VentanaOpciones extends StatelessWidget {
           )
           )
             ,const SizedBox(
-            height: 250,
+            height: 150,
           ),
             Image.asset(
-              'assets/pingu.png',
+              'assets/pinguinoAjustes.jpeg',
               width: 250,
               height: 250,
               fit: BoxFit.fill),
@@ -296,7 +291,7 @@ class VentanaOpciones extends StatelessWidget {
                         child: Text(
                             'Cambiar Tema'
                         )),
-                    const ElevatedButton(
+                     const ElevatedButton(
                       onPressed: null,
                       child: Text(
                           'Cambiar Fuente'
@@ -315,7 +310,6 @@ class VentanaOpciones extends StatelessWidget {
     ));
   }
 }
-
 class VentanaBusqueda extends StatelessWidget {
   const VentanaBusqueda({super.key});
 
@@ -331,8 +325,95 @@ class VentanaBusqueda extends StatelessWidget {
             Navigator.pop(context);
           },
           child:const Text('Volver'),
-        )
+        ),
       ),
     );
   }
 }
+class VentanaBusquedaNoEncontrada extends StatelessWidget {
+  const VentanaBusquedaNoEncontrada({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('VentanaBusqueda F'),
+      ),
+      body: Center(
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child:const Text('Volver'),
+          ),
+        /*Image.asset(
+            'assets/pinguinothe.jpeg',
+            width: 250,
+            height: 250,
+            fit: BoxFit.fill),
+          )
+         */
+
+      ),
+    );
+  }
+}
+class Post {
+  final int userId;
+  final int id;
+  final String title;
+  final String body;
+
+  Post({
+    required this.userId,
+    required this.id,
+    required this.title,
+    required this.body,
+  });
+
+  factory Post.fromJson(Map<String, dynamic> json) {
+    return Post(
+      userId: json['userId'] as int,
+      id: json['id'] as int,
+      title: json['title'] as String,
+      body: json['body'] as String,
+    );
+  }
+}
+class ServicioHttp {
+
+  Future<List<Post>> getPosts() async {
+    Response response = await get(Uri.parse(API_URL));
+    if (response.statusCode == 200) {
+      List<dynamic> body = jsonDecode(response.body);
+      search_recipes("rice");
+
+      List<Post> posts = body.map((dynamic item) => Post.fromJson(item),)
+          .toList();
+
+      return posts;
+    }
+    else {
+      throw "Unable";
+    }
+  }
+}
+Future<int> _checkConnection() async{
+  try{
+    final result = await InternetAddress.lookup('www.edamam.com');
+    if(result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+      return 0;
+    }
+  } on SocketException catch (_) {
+    try{
+      final result = await InternetAddress.lookup('www.google.com');
+      if(result.isNotEmpty && result[0].rawAddress.isNotEmpty){
+        return 1;
+      }
+    } on SocketException catch (_) {
+      return 2;
+    }
+  }
+  return 0;
+}
+
