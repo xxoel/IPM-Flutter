@@ -1,21 +1,11 @@
-import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart';
 import 'package:app_movil/edamam.dart';
 import 'package:flutter/material.dart';
 
 void main() {
   runApp(const MyApp());
 }
-Future<RecipeBlock?> fetchRecipe(query) async {
-  final response = await get(Uri.parse(API_URL));
-  if (response.statusCode == 200) {
-    return search_recipes(query);
-  }
-  else {
-    throw Exception("NOOO");
-  }
-}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -32,8 +22,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
 
+  const MyHomePage({super.key, required this.title});
   final String title;
 
   @override
@@ -43,29 +33,12 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   late Future<RecipeBlock?> recetas;
   final _text = TextEditingController();
-  double _brightness = 1.0;
   bool _validate = false;
 
-  @override
-  void initState(){
-    super.initState();
-    recetas = fetchRecipe("rice");
-  }
   @override
   void dispose(){
     _text.dispose();
     super.dispose();
-  }
-
-  final _items = List<String>.generate(100, (i) => "Søgetekst $i");
-  List<String> _itemsSuggestions = [];
-
-  void searchResults(String query) {
-    setState(() {
-      _itemsSuggestions = _items
-          .where((data) => data.toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    });
   }
   Widget makeSearchBar() {
     Widget searchBar = Container(
@@ -83,24 +56,36 @@ class _MyHomePageState extends State<MyHomePage> {
             padding: const EdgeInsets.all(8.0),
            child: TextField(
                 controller: _text,
-                onChanged: (value) => searchResults(value),
                 onSubmitted: (value) {
-                  setState(()  {
-                    _text.text.isEmpty ? _validate = true : _validate = false;
-                   if (!_validate) {
-                     Future<RecipeBlock?> listaRecetas=  search_recipes(_text.text).then((value) {
-                       if (value?.count == 0){
-                         Navigator.push(context, MaterialPageRoute(builder: (context) => const VentanaBusquedaNoEncontrada()));
-                       }
-                       else {
-                         Navigator.push(context, MaterialPageRoute(
-                             builder: (context) => const VentanaBusqueda()),);
-                       }
-                     },
-                     );
+                  _text.text.isEmpty ? _validate = true : _validate = false;
+                  if(!_validate){
+                  setState(() async {
+                    int checkConnection = await _checkConnection();
+                    if (checkConnection == 0) {
+                        search_recipes(_text.text).then((value) {
+                        if (value?.count == 0) {
+                          Navigator.push(context, MaterialPageRoute(builder: (
+                              context) => const VentanaBusquedaNoEncontrada()));
+                        }
+                        else {
+                          Navigator.push(context, MaterialPageRoute(
+                              builder: (context) =>
+                                  VentanaBusqueda(block: value)),);
+                        }
+                      },
+                      );
                     }
-                   _itemsSuggestions = [];
-                  });
+                    else {
+                      if (checkConnection == 1) {
+                        Navigator.push(context, MaterialPageRoute(
+                            builder: (context) => const VentanaErrorServer()));
+                      }
+                      if (checkConnection == 2) {
+                        Navigator.push(context, MaterialPageRoute(
+                            builder: (context) => const VentanaErrorRed()));
+                      }
+                    }
+                  });}
                },
                 decoration: InputDecoration(
                     isDense: true,
@@ -163,41 +148,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-  Column _buildButtonColumn(Color color, IconData icon, String label,BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        InkWell(
-          child: Icon(icon, color: color, size: 80.0),
-          onTap: () {
-            if (label == "OPT") {
-              Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => const VentanaOpciones()),
-              );
-            }
-            if (label == "HELP") {
-              Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const VentanaAyuda()),
-              );
-            }
-          },
-        ),
-        Container(
-          margin: const EdgeInsets.only(top: 8),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-              color: color,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
 class VentanaAyuda extends StatelessWidget {
   const VentanaAyuda({super.key});
 
@@ -223,7 +173,9 @@ class VentanaAyuda extends StatelessWidget {
                     enabled: false,
                     maxLines: 6,
                     minLines: 6,
-                    style: TextStyle(color:Colors.white,fontSize: 22,height: 2.0),
+
+                      style: TextStyle(color:Colors.white,fontSize: 22,height: 2.0),
+
                     decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         hintText: 'En esta pestaña se mostrará como usar la aplicación de búsqueda de recetas.'
@@ -247,6 +199,7 @@ class VentanaAyuda extends StatelessWidget {
     ;
   }
 }
+
 class VentanaOpciones extends StatelessWidget {
   const VentanaOpciones({super.key});
 
@@ -258,9 +211,9 @@ class VentanaOpciones extends StatelessWidget {
         title: const Text('VentanaOpciones'),
       ),
       body: Center(
-        child:Column(
-          children: [const TextField(
-            textAlign: TextAlign.center,
+            child:Column(
+              children: [const TextField(
+              textAlign: TextAlign.center,
             enabled: false,
           style: TextStyle(color:Colors.white,fontSize: 22,height: 2.0),
           decoration: InputDecoration(
@@ -271,11 +224,12 @@ class VentanaOpciones extends StatelessWidget {
             ,const SizedBox(
             height: 150,
           ),
+
             Image.asset(
-              'assets/pinguinoAjustes.jpeg',
-              width: 250,
-              height: 250,
-              fit: BoxFit.fill),
+                'assets/pinguinoAjustes.jpeg',
+                width: 250,
+                height: 250,
+                fit: BoxFit.fill),
             Expanded(
             child:Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -307,113 +261,218 @@ class VentanaOpciones extends StatelessWidget {
                 ),
               ]))],
         )
-    ));
+    )
+    );
   }
 }
-class VentanaBusqueda extends StatelessWidget {
-  const VentanaBusqueda({super.key});
+
+class VentanaErrorServer extends StatelessWidget{
+  const VentanaErrorServer ({super.key});
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('VentanaErrorserveS'),
+        ),
+        body: Center(
+            child: Column(
+                children: [Image.asset(
+                    'assets/PinguinoServer.jpeg',
+                    width: 250,
+                    height: 250,
+                    fit: BoxFit.fill),
+                  const TextField(
+                    enabled: false,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white,fontSize: 22,height: 2.0),
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Ha ocurrido un error de conexión con el servidor o no'
+                            'se ha podido establecer. Espere unos segundos o inténtelo de'
+                            ' nuevo más tarde'
+                    ),
+                  )
+                ]
+
+            )
+        )
+    );
+  }
+}
+
+class VentanaErrorRed extends StatelessWidget{
+  const VentanaErrorRed ({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('VentanaErrorRed'),
+        ),
+        body: Center(
+            child: Column(
+                children: [Image.asset(
+                    'assets/PinguinoServer.jpeg',
+                    width: 250,
+                    height: 250,
+                    fit: BoxFit.fill),
+                  const TextField(
+                    enabled: false,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white,fontSize: 22,height: 2.0),
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Error de red: No se ha podido establecer la conexión a internet.'
+                            ' Compruebe su conexión a la red o inténtelo de nuevo más tarde.'
+                    ),
+                  )
+                ]
+            )
+        )
+    );
+  }
+}
+
+class VentanaBusqueda extends StatelessWidget {
+  final RecipeBlock? block;
+  const VentanaBusqueda({super.key, required this.block});
+
+  @override
+  Widget build(BuildContext context) {
+    for(var recipe in block!.recipes!){
+      print(recipe);
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('VentanaBusqueda'),
       ),
       body: Center(
-        child: ElevatedButton(
+        child:Column(
+        children:[ ElevatedButton(
           onPressed: () {
             Navigator.pop(context);
+
           },
           child:const Text('Volver'),
         ),
+          const TextField (
+            enabled: false,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white,fontSize: 22,height: 2.0),
+            decoration: InputDecoration(
+                border: OutlineInputBorder(),
+            ),
+          )
+      ],
       ),
+      )
     );
   }
 }
+
 class VentanaBusquedaNoEncontrada extends StatelessWidget {
   const VentanaBusquedaNoEncontrada({super.key});
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('VentanaBusqueda F'),
       ),
       body: Center(
-          child: ElevatedButton(
+        child: Expanded(
+            child : SingleChildScrollView(
+              child : Column(
+            children:[const SizedBox(
+            height: 200,),
+            Image.asset(
+              'assets/PinguinoPensativo.jpeg',
+              width: 250,
+              height: 250,
+              fit: BoxFit.fill),
+            const SizedBox(
+              height: 200,
+            ),
+            const TextField(
+              enabled: false,
+              textAlign: TextAlign.center,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Vaya, su palabra no está relacionada con ninguna receta :('
+              ),
+            ),
+            const SizedBox(
+              height: 100,
+            ),
+            ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
             },
             child:const Text('Volver'),
           ),
-        /*Image.asset(
-            'assets/pinguinothe.jpeg',
-            width: 250,
-            height: 250,
-            fit: BoxFit.fill),
-          )
-         */
-
-      ),
+        ]
+      )
+    )),
+    )
     );
   }
 }
-class Post {
-  final int userId;
-  final int id;
-  final String title;
-  final String body;
 
-  Post({
-    required this.userId,
-    required this.id,
-    required this.title,
-    required this.body,
-  });
-
-  factory Post.fromJson(Map<String, dynamic> json) {
-    return Post(
-      userId: json['userId'] as int,
-      id: json['id'] as int,
-      title: json['title'] as String,
-      body: json['body'] as String,
-    );
-  }
-}
-class ServicioHttp {
-
-  Future<List<Post>> getPosts() async {
-    Response response = await get(Uri.parse(API_URL));
-    if (response.statusCode == 200) {
-      List<dynamic> body = jsonDecode(response.body);
-      search_recipes("rice");
-
-      List<Post> posts = body.map((dynamic item) => Post.fromJson(item),)
-          .toList();
-
-      return posts;
-    }
-    else {
-      throw "Unable";
-    }
-  }
-}
 Future<int> _checkConnection() async{
+  int retorno=0;
   try{
     final result = await InternetAddress.lookup('www.edamam.com');
     if(result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-      return 0;
+      retorno = 0; //CONECTADO
     }
   } on SocketException catch (_) {
     try{
       final result = await InternetAddress.lookup('www.google.com');
       if(result.isNotEmpty && result[0].rawAddress.isNotEmpty){
-        return 1;
+        retorno = 1; //ERROR SERVIDOR
       }
     } on SocketException catch (_) {
-      return 2;
+      retorno = 2; //ERROR RED
     }
   }
-  return 0;
+  return retorno;
 }
+
+Column _buildButtonColumn(Color color, IconData icon, String label,BuildContext context) {
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      InkWell(
+        child: Icon(icon, color: color, size: 80.0),
+        onTap: () {
+          if (label == "OPT") {
+            Navigator.push(context, MaterialPageRoute(
+                builder: (context) => const VentanaOpciones()),
+            );
+          }
+          if (label == "HELP") {
+            Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const VentanaAyuda()),
+            );
+          }
+        },
+      ),
+      Container(
+        margin: const EdgeInsets.only(top: 8),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w800,
+            color: color,
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
 
