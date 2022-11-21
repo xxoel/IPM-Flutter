@@ -2,64 +2,11 @@ import 'dart:io';
 import 'package:app_movil/edamam.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
-import 'dart:async'; //For StreamController/Stream
+import 'dart:async';
+import 'package:app_movil/errors.dart';
+import 'ventanas.dart';
 
 
-class ConnectionStatusSingleton {
-
-  static final ConnectionStatusSingleton _singleton = ConnectionStatusSingleton._internal();
-  ConnectionStatusSingleton._internal();
-
-  static ConnectionStatusSingleton getInstance() => _singleton;
-
-  int hasConnection = 0;
-
-  StreamController connectionChangeController =StreamController.broadcast();
-
-  final Connectivity _connectivity =Connectivity();
-
-  void initialize() {
-    _connectivity.onConnectivityChanged.listen(_connectionChange);
-    checkConnection();
-  }
-
-  Stream get connectionChange => connectionChangeController.stream;
-
-  //A clean up method to close our StreamController
-  // Because this is meant to exist through the entire application life cycle this isn't
-  // really an issue
-  void dispose() {
-    connectionChangeController.close();
-  }
-  //flutter_connectivity's listener
-  void _connectionChange(ConnectivityResult result) {
-    checkConnection();
-  }
-  //The test to actually see if there is a connection
-  Future checkConnection() async {
-    int previousConnection = hasConnection;
-    try {
-      final result =await InternetAddress.lookup('google.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        try{
-          final result = await InternetAddress.lookup('www.edamam.com');
-          if(result.isNotEmpty && result[0].rawAddress.isNotEmpty){
-            hasConnection = 0; //CONNECTION OK
-          }
-        } on SocketException catch(_) {
-          hasConnection = 1; //SERVER
-        }
-      }
-    } on SocketException catch(_) {
-      hasConnection = 2; //RED
-    }
-    //The connection status changed send out an update to all listeners
-    if (previousConnection != hasConnection) {
-      connectionChangeController.add(hasConnection);
-    }
-    return hasConnection;
-  }
-}
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   ConnectionStatusSingleton connectionStatusSingleton = ConnectionStatusSingleton.getInstance();
@@ -128,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Image.asset(
-              'assets/pinguino.jpeg',
+              'assets/PinguinoChef.png',
               width: 250,
              height: 250,
              fit: BoxFit.fill
@@ -164,8 +111,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   setState(()  {
                     _text.text.isEmpty ? _validate = true : _validate = false;
                     if(!_validate){
-                    //int checkConnection = await _checkConnection();
-                   // if (checkConnection == 0) {
                         search_recipes(_text.text).then((value) {
                         if (value?.count == 0) {
                           Navigator.push(context, MaterialPageRoute(builder: (
@@ -209,177 +154,13 @@ class _MyHomePageState extends State<MyHomePage> {
           child:Expanded(
             child: SingleChildScrollView(
               child: isOffline !=0 ? Column(
-                children: [isOffline == 1 ? _errorServerConection() : _errorRedConection()]
+                children: [isOffline == 1 ?  ErrorServidor() : ErrorRed()]
               ): Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [searchBar,buttonSection]
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     )
-    )
-    );
-  }
-
-  Center _errorServerConection(){
-    return Center(
-        child: Column(
-            children: [Image.asset(
-                'assets/PinguinoServer.jpeg',
-                width: 250,
-                height: 250,
-                fit: BoxFit.fill),
-              const TextField(
-                enabled: false,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white,fontSize: 22,height: 2.0),
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Ha ocurrido un error de conexión con el servidor o no'
-                        'se ha podido establecer. Espere unos segundos o inténtelo de'
-                        ' nuevo más tarde'
-                ),
-              )
-            ]
-
-        )
-    );
-  }
-
-  Center _errorRedConection(){
-    return Center(
-        child: Column(
-            children: [Image.asset(
-                'assets/PinguinoServer.jpeg',
-                width: 250,
-                height: 250,
-                fit: BoxFit.fill),
-              const TextField(
-                enabled: false,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white,fontSize: 22,height: 2.0),
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Error de red: No se ha podido establecer la conexión a internet.'
-                        ' Compruebe su conexión a la red o inténtelo de nuevo más tarde.'
-                ),
-              )
-            ]
-        )
-    );
-  }
-}
-
-class VentanaAyuda extends StatelessWidget {
-  const VentanaAyuda({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('VentanaAyuda'),
-      ),
-      body: Center(
-        child:
-            Container(
-              color: Colors.white,
-            child:
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(
-                  height: 300,
-                ),
-                  const Expanded(
-                    child: TextField(
-                    enabled: false,
-                    maxLines: 6,
-                    minLines: 6,
-                      style: TextStyle(color:Colors.white,fontSize: 22,height: 2.0),
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: 'En esta pestaña se mostrará como usar la aplicación de búsqueda de recetas.'
-                            'Deberás introducir la palabra clave sobre la cual deseas obtener recetas que la contengan '
-                            'en la barra de búsqueda, y una vez hecho esto, presionar la tecla ENTER. '
-                            'El sistema se encargará de mostrarte las recetas que contienen esa palabra clave, o el error '
-                            'correspondiente. !Muchas gracias por usar nuestra aplicación!'
-                    ),
-                  )
-                  ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Volver'),
-                )
-                ],
-              ))
-      ),
-    )
-    ;
-  }
-}
-
-class VentanaOpciones extends StatelessWidget {
-  const VentanaOpciones({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        foregroundColor: Colors.black87,
-        title: const Text('VentanaOpciones'),
-      ),
-      body: Center(
-            child:Column(
-              children: [const TextField(
-              textAlign: TextAlign.center,
-            enabled: false,
-          style: TextStyle(color:Colors.white,fontSize: 22,height: 2.0),
-          decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Bienvenido a la pestaña de Opciones'
-          )
-          )
-            ,const SizedBox(
-            height: 150,
-          ),
-
-            Image.asset(
-                'assets/pinguinoAjustes.jpeg',
-                width: 250,
-                height: 250,
-                fit: BoxFit.fill),
-            Expanded(
-            child:Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [ButtonBar(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget> [
-                    const SizedBox(
-                      height: 200,
-                    ),
-                    const ElevatedButton(
-                        onPressed: null,
-                        child: Text(
-                            'Cambiar Tema'
-                        )),
-                     const ElevatedButton(
-                      onPressed: null,
-                      child: Text(
-                          'Cambiar Fuente'
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Volver'),
-                    )
-                  ],
-                ),
-              ]))],
-        )
     )
     );
   }
@@ -472,7 +253,7 @@ class VentanaBusquedaNoEncontrada extends StatelessWidget {
             children:[const SizedBox(
             height: 200,),
             Image.asset(
-              'assets/PinguinoPensativo.jpeg',
+              'assets/PinguinoPensativo.png',
               width: 250,
               height: 250,
               fit: BoxFit.fill),
@@ -537,6 +318,62 @@ Column _buildButtonColumn(Color color, IconData icon, String label,BuildContext 
       ),
     ],
   );
+}
+
+class ConnectionStatusSingleton {
+
+  static final ConnectionStatusSingleton _singleton = ConnectionStatusSingleton._internal();
+  ConnectionStatusSingleton._internal();
+
+  static ConnectionStatusSingleton getInstance() => _singleton;
+
+  int hasConnection = 0;
+
+  StreamController connectionChangeController =StreamController.broadcast();
+
+  final Connectivity _connectivity =Connectivity();
+
+  void initialize() {
+    _connectivity.onConnectivityChanged.listen(_connectionChange);
+    checkConnection();
+  }
+
+  Stream get connectionChange => connectionChangeController.stream;
+
+  //A clean up method to close our StreamController
+  // Because this is meant to exist through the entire application life cycle this isn't
+  // really an issue
+  void dispose() {
+    connectionChangeController.close();
+  }
+  //flutter_connectivity's listener
+  void _connectionChange(ConnectivityResult result) {
+    checkConnection();
+  }
+  //The test to actually see if there is a connection
+  Future checkConnection() async {
+    int previousConnection = hasConnection;
+    try {
+      final result =await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        try{
+          final result = await InternetAddress.lookup('www.edamam.com');
+          if(result.isNotEmpty && result[0].rawAddress.isNotEmpty){
+            hasConnection = 0; //CONNECTION OK
+          }
+        } on SocketException catch(_) {
+          hasConnection = 1; //SERVER
+        }
+      }
+    } on SocketException catch(_) {
+      hasConnection = 2; //RED
+    }
+    //The connection status changed send out an update to all listeners
+    if (previousConnection != hasConnection) {
+      connectionChangeController.add(hasConnection);
+    }
+    return hasConnection;
+  }
 }
 
 
