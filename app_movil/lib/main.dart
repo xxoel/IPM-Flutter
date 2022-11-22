@@ -1,11 +1,10 @@
-import 'dart:io';
 import 'package:app_movil/edamam.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:app_movil/errors.dart';
-import 'ventanas.dart';
-
+import 'errors.dart';
+import 'ventanasHelpOpc.dart';
+import  'ventanaBusqErronea.dart';
+import 'connectionStatus.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -236,55 +235,6 @@ class VentanaBusqueda extends StatelessWidget {
   }
 }
 
-class VentanaBusquedaNoEncontrada extends StatelessWidget {
-  const VentanaBusquedaNoEncontrada({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('VentanaBusqueda F'),
-      ),
-      body: Center(
-        child: Expanded(
-            child : SingleChildScrollView(
-              child : Column(
-            children:[const SizedBox(
-            height: 200,),
-            Image.asset(
-              'assets/PinguinoPensativo.png',
-              width: 250,
-              height: 250,
-              fit: BoxFit.fill),
-            const SizedBox(
-              height: 200,
-            ),
-            const TextField(
-              enabled: false,
-              textAlign: TextAlign.center,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Vaya, su palabra no está relacionada con ninguna receta :('
-              ),
-            ),
-            const SizedBox(
-              height: 100,
-            ),
-            ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child:const Text('Volver'),
-          ),
-        ]
-      )
-    )),
-    )
-    );
-  }
-}
-
 Column _buildButtonColumn(Color color, IconData icon, String label,BuildContext context) {
   return Column(
     mainAxisSize: MainAxisSize.min,
@@ -320,60 +270,5 @@ Column _buildButtonColumn(Color color, IconData icon, String label,BuildContext 
   );
 }
 
-class ConnectionStatusSingleton {
-
-  static final ConnectionStatusSingleton _singleton = ConnectionStatusSingleton._internal();
-  ConnectionStatusSingleton._internal();
-
-  static ConnectionStatusSingleton getInstance() => _singleton;
-
-  int hasConnection = 0;
-
-  StreamController connectionChangeController =StreamController.broadcast();
-
-  final Connectivity _connectivity =Connectivity();
-
-  void initialize() {
-    _connectivity.onConnectivityChanged.listen(_connectionChange);
-    checkConnection();
-  }
-
-  Stream get connectionChange => connectionChangeController.stream;
-
-  //A clean up method to close our StreamController
-  // Because this is meant to exist through the entire application life cycle this isn't
-  // really an issue
-  void dispose() {
-    connectionChangeController.close();
-  }
-  //flutter_connectivity's listener
-  void _connectionChange(ConnectivityResult result) {
-    checkConnection();
-  }
-  //The test to actually see if there is a connection
-  Future checkConnection() async {
-    int previousConnection = hasConnection;
-    try {
-      final result =await InternetAddress.lookup('google.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        try{
-          final result = await InternetAddress.lookup('www.edamam.com');
-          if(result.isNotEmpty && result[0].rawAddress.isNotEmpty){
-            hasConnection = 0; //CONNECTION OK
-          }
-        } on SocketException catch(_) {
-          hasConnection = 1; //SERVER
-        }
-      }
-    } on SocketException catch(_) {
-      hasConnection = 2; //RED
-    }
-    //The connection status changed send out an update to all listeners
-    if (previousConnection != hasConnection) {
-      connectionChangeController.add(hasConnection);
-    }
-    return hasConnection;
-  }
-}
 
 
