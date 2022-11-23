@@ -126,11 +126,86 @@ Future<RecipeBlock?> search_recipes(String query) async {
   // TODO: include a search criteria!
   var formattedQuery =
       "type=$TYPE&beta=true&app_id=$APP_ID&app_key=$APP_KEY&q=$query";
-
+  print(formattedQuery);
+  print("GASSASSSSSSS");
   var uri = Uri(
       scheme: "https", host: API_URL, path: ENDPOINT, query: formattedQuery);
-
+  print("ESPALAAAAAAA");
+  print(uri);
   var response = await http.get(uri);
+  var data = jsonDecode(response.body);
+
+  if (response.statusCode != 200) {
+    List<String> errors = [];
+    if (data is List) {
+      for (var element in data) {
+        errors.add("${element["message"]} ${element["params"]}");
+      }
+    } else {
+      errors.add("${data["message"]} ${data["params"]}");
+    }
+    throw FormatException(errors);
+  }
+
+  RecipeBlock block;
+
+  if (data['count'] == 0) {
+    block = RecipeBlock(from: 0, to: 0, count: 0);
+  } else {
+    List<Recipe> recipes = [];
+
+    for (var hit in data["hits"]) {
+      var recipe = hit["recipe"];
+      List<Nutrient> totalNutrients = [];
+      recipe["totalNutrients"]?.forEach((key, value) {
+        totalNutrients.add(Nutrient(value["label"], value["quantity"]));
+      });
+
+      List<Nutrient> totalDaily = [];
+      recipe["totalDaily"]?.forEach((key, value) {
+        totalDaily.add(Nutrient(value["label"], value["quantity"]));
+      });
+
+      recipes.add(Recipe(
+          uri: recipe["uri"],
+          label: recipe["label"],
+          image: recipe["image"],
+          thumbnail: recipe["images"]["THUMBNAIL"]["url"],
+          source: recipe["source"],
+          sourceUrl: recipe["url"],
+          servings: recipe["yield"],
+          dietLabels: parse_list(recipe["dietLabels"]),
+          healthLabels: parse_list(recipe["healthLabels"]),
+          cautions: parse_list(recipe["cautions"]),
+          ingredients: parse_list(recipe["ingredientLines"]),
+          calories: recipe["calories"],
+          glycemicIndex: recipe["glycemicIndex"],
+          totalCO2Emissions: recipe["totalCO2Emissions"],
+          co2EmissionsClass: recipe["co2EmissionsClass"],
+          totalTime: recipe["totalTime"],
+          cuisineType: parse_list(recipe["cuisineType"]),
+          mealType: parse_list(recipe["mealType"]),
+          dishType: parse_list(recipe["dishType"]),
+          totalNutrients: totalNutrients,
+          totalDaily: totalDaily));
+    }
+
+    block = RecipeBlock(
+        from: data["from"],
+        to: data["to"],
+        count: data["count"],
+        nextBlock: data["_links"]["next"]["href"],
+        recipes: recipes);
+  }
+  return block;
+}
+
+Future<RecipeBlock?> own_search_recipes(String query) async {
+  // TODO: include a search criteria!
+  var formattedQuery = query;
+
+  var response = await http.get(Uri.parse(formattedQuery));
+
   var data = jsonDecode(response.body);
 
   if (response.statusCode != 200) {

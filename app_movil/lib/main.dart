@@ -1,5 +1,6 @@
 import 'package:app_movil/edamam.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'dart:async';
 import 'errors.dart';
 import 'ventanasHelpOpc.dart';
@@ -10,7 +11,7 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   ConnectionStatusSingleton connectionStatusSingleton = ConnectionStatusSingleton.getInstance();
   connectionStatusSingleton.initialize();
-    runApp(const MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -42,6 +43,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   late StreamSubscription connectionChangeStream;
+  late Future<RecipeBlock?> receta;
 
   int isOffline = 0;
 
@@ -58,6 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
       isOffline = hasConnection;
     });
   }
+
   late Future<RecipeBlock?> recetas;
   final _text = TextEditingController();
   bool _validate = false;
@@ -67,6 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _text.dispose();
     super.dispose();
   }
+
   Widget makeSearchBar() {
     Widget searchBar = Container(
       margin: const EdgeInsets.only(top: 100, left: 80, right: 80, bottom: 100),
@@ -166,72 +170,83 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class VentanaBusqueda extends StatelessWidget {
+
   final RecipeBlock? block;
+
   const VentanaBusqueda({super.key, required this.block});
 
   @override
   Widget build(BuildContext context) {
-    print(search_recipes(block!.nextBlock!));
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('VentanaBusqueda'),
-      ),
-      body: Center(
-          child:SingleChildScrollView(
-            child:Column(
-              children:[
-                for(var recipe in block!.recipes!)
-                  Ink.image(
-                    width: double.infinity,
-                    height:240,
-                    fit: BoxFit.cover,
-                    image: NetworkImage('${recipe.image}'),
-                    child: Center(
-                        child: Stack(
-                                children:
-                                [Text("${recipe.label}",
-                                   style: TextStyle(
-                                   fontSize: 40,
-                                   foreground: Paint()
-                                     ..style= PaintingStyle.stroke
-                                     ..strokeWidth= 6
-                                     ..color= Colors.black,
-                                 ),),
+    if (block?.recipes != null) {
+      return Scaffold(
+          appBar: AppBar(
+            title: const Text('VentanaBusqueda'),
+          ),
+          body: Center(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    for(var recipe in block!.recipes!)
+                      Ink.image(
+                          width: double.infinity,
+                          height: 240,
+                          fit: BoxFit.cover,
+                          image: NetworkImage('${recipe.image}'),
+                          child: Center(
+                            child: Stack(
+                              children:
+                              [Text("${recipe.label}",
+                                style: TextStyle(
+                                  fontSize: 40,
+                                  foreground: Paint()
+                                    ..style = PaintingStyle.stroke
+                                    ..strokeWidth = 6
+                                    ..color = Colors.black,
+                                ),),
                                 Text("${recipe.label}",
                                     style: const TextStyle(
-                                    fontSize: 40,
-                                    color: Colors.white,
-                    )),],),
-            )),
-          ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
-
-          },
-          child:const Text('Volver'),
-        ),
-          const TextField (
-            enabled: false,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white,fontSize: 22,height: 2.0),
-            decoration: InputDecoration(
-                border: OutlineInputBorder(),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              search_recipes(block!.nextBlock!).then((data){
-                Navigator.pushReplacement(context, MaterialPageRoute(
-                    builder: (context) =>  VentanaBusqueda(block: data)));
-              });
-            },
-            child:const Text('Siguiente página'),
-          ),
-      ],
-      ),
-      )
-    )
-    );
+                                      fontSize: 40,
+                                      color: Colors.white,
+                                    )),
+                              ],),
+                          )),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Volver'),
+                    ),
+                    const TextField (
+                      enabled: false,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: Colors.white, fontSize: 22, height: 2.0),
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (block?.nextBlock != null) {
+                          own_search_recipes(block!.nextBlock!).then((data) {
+                            Navigator.pushReplacement(
+                              context, MaterialPageRoute(
+                                builder: (context) =>
+                                    VentanaBusqueda(block: data)),);
+                          });
+                        }
+                      },
+                      child: const Text('Siguiente página'),
+                    ),
+                  ],
+                ),
+              )
+          )
+      );
+    }
+    else {
+      return const CircularProgressIndicator();
+    }
   }
 }
 

@@ -50,7 +50,15 @@ class ErrorRed extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-        child: Column(
+        child: SizedBox(
+        height: 1200,
+        child: DecoratedBox(
+          decoration: const BoxDecoration(
+            color: Colors.cyanAccent,
+            border: Border(),
+        ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Image.asset(
                   'assets/Segurata.png',
@@ -70,6 +78,8 @@ class ErrorRed extends StatelessWidget {
               )
             ]
         )
+    )
+    )
     );
   }
 }
