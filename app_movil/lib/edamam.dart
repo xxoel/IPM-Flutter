@@ -126,12 +126,10 @@ Future<RecipeBlock?> search_recipes(String query) async {
   // TODO: include a search criteria!
   var formattedQuery =
       "type=$TYPE&beta=true&app_id=$APP_ID&app_key=$APP_KEY&q=$query";
-  print(formattedQuery);
-  print("GASSASSSSSSS");
+
   var uri = Uri(
       scheme: "https", host: API_URL, path: ENDPOINT, query: formattedQuery);
-  print("ESPALAAAAAAA");
-  print(uri);
+
   var response = await http.get(uri);
   var data = jsonDecode(response.body);
 
@@ -201,7 +199,7 @@ Future<RecipeBlock?> search_recipes(String query) async {
 }
 
 Future<RecipeBlock?> own_search_recipes(String query) async {
-  // TODO: include a search criteria!
+
   var formattedQuery = query;
 
   var response = await http.get(Uri.parse(formattedQuery));
