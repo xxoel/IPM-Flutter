@@ -1,6 +1,6 @@
 import 'package:app_movil/edamam.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+import 'ventanaInfoDetallada.dart';
 import 'dart:async';
 import 'errors.dart';
 import 'ventanasHelpOpc.dart';
@@ -195,7 +195,8 @@ class VentanaBusqueda extends StatelessWidget {
                           child: Center(
                             child: Stack(
                               children:
-                              [Text("${recipe.label}",
+                              [Text(
+                                "${recipe.label}",
                                 style: TextStyle(
                                   fontSize: 40,
                                   foreground: Paint()
@@ -203,11 +204,18 @@ class VentanaBusqueda extends StatelessWidget {
                                     ..strokeWidth = 6
                                     ..color = Colors.black,
                                 ),),
-                                Text("${recipe.label}",
+                                InkWell(
+                                  child: Text("${recipe.label}",
                                     style: const TextStyle(
                                       fontSize: 40,
                                       color: Colors.white,
                                     )),
+                                  onTap: () {
+                                    Navigator.push(context, MaterialPageRoute(
+                                      builder: (context) =>
+                                           ventanaInfo(recipe: recipe)),);
+                                  },
+                                )
                               ],),
                           )),
                     ElevatedButton(
