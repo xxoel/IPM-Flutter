@@ -21,7 +21,7 @@ class VentanaAyuda extends StatelessWidget {
                     height: 300,
                   ),
                   const Expanded(
-                      child: TextField(
+                      child: SingleChildScrollView(child: TextField(
                         enabled: false,
                         maxLines: 6,
                         minLines: 6,
@@ -34,6 +34,7 @@ class VentanaAyuda extends StatelessWidget {
                                 'El sistema se encargará de mostrarte las recetas que contienen esa palabra clave, o el error '
                                 'correspondiente. !Muchas gracias por usar nuestra aplicación!'
                         ),
+                      )
                       )
                   ),
                   ElevatedButton(

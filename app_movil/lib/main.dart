@@ -213,26 +213,11 @@ class VentanaBusqueda extends StatelessWidget {
                                   onTap: () {
                                     Navigator.push(context, MaterialPageRoute(
                                       builder: (context) =>
-                                           ventanaInfo(recipe: recipe)),);
+                                           VentanaInfo(recipe: recipe)),);
                                   },
                                 )
                               ],),
                           )),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Volver'),
-                    ),
-                    const TextField (
-                      enabled: false,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: Colors.white, fontSize: 22, height: 2.0),
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
                     ElevatedButton(
                       onPressed: () {
                         if (block?.nextBlock != null) {
@@ -245,6 +230,12 @@ class VentanaBusqueda extends StatelessWidget {
                         }
                       },
                       child: const Text('Siguiente página'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Volver'),
                     ),
                   ],
                 ),
