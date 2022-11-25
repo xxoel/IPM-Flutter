@@ -19,12 +19,13 @@ class VentanaInfo extends StatelessWidget {
                     height: 100,
                   ),
                   Container(
-                    color: Colors.white,
+                    margin: const EdgeInsets.only(left: 15.0,right: 15.0),
+                    color: Colors.white10,
                     child: Ink.image(
                         width: double.infinity,
-                        fit: BoxFit.cover,
+                        fit: BoxFit.fitWidth,
                         height: 180,
-                        image: NetworkImage('${recipe.thumbnail}')
+                        image: NetworkImage('${recipe.image}')
                     ),
                   ),
                   Container(
