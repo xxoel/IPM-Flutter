@@ -38,13 +38,9 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-
-
 class _MyHomePageState extends State<MyHomePage> {
 
   late StreamSubscription connectionChangeStream;
-  late Future<RecipeBlock?> receta;
-
   int isOffline = 0;
 
   @override
@@ -61,7 +57,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  late Future<RecipeBlock?> recetas;
   final _text = TextEditingController();
   bool _validate = false;
 
@@ -86,6 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Padding(
             padding: const EdgeInsets.all(8.0),
            child: TextField(
+                style: const TextStyle(color: Colors.black,fontSize: 30),
                 controller: _text,
                decoration: InputDecoration(
                    isDense: true,
@@ -105,16 +101,17 @@ class _MyHomePageState extends State<MyHomePage> {
                          setState(() {});
                        }),
                    border: const OutlineInputBorder(
+                       borderSide: BorderSide(color: Colors.black),
                        borderRadius: BorderRadius.all(
-                         Radius.circular(10.0),
+                         Radius.circular(15.0),
                        )
                    )
                ),
                 onSubmitted: (value) {
-                  setState(()  {
+                  setState(() {
                     _text.text.isEmpty ? _validate = true : _validate = false;
-                    if(!_validate){
-                        search_recipes(_text.text).then((value) {
+                    if (!_validate) {
+                      search_recipes(_text.text).then((value) {
                         if (value?.count == 0) {
                           Navigator.push(context, MaterialPageRoute(builder: (
                               context) => const VentanaBusquedaNoEncontrada()));
@@ -126,8 +123,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         }
                       },
                       );
-                  }});
-
+                    }
+                  }
+                  );
                },
             ),
          )
@@ -153,16 +151,27 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
+      body: DecoratedBox(
+        decoration: BoxDecoration(
+        color: Colors.lightBlueAccent,
+        border: Border.all(
+          color: Colors.black87,
+          width: 10,),
+        gradient: const LinearGradient(
+            colors: [Colors.white10,Colors.black26]),
+        image: const DecorationImage(image:AssetImage('assets/food.png'),
+            fit: BoxFit.cover),),
+          child: Center(
           child:Expanded(
             child: SingleChildScrollView(
               child: isOffline !=0 ? Column(
-                children: [isOffline == 1 ?  ErrorServidor() : ErrorRed()]
+                children: [isOffline == 1 ?  const ErrorServidor() : const ErrorRed()]
               ): Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [searchBar,buttonSection]
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    )
     )
     )
     );
@@ -172,7 +181,6 @@ class _MyHomePageState extends State<MyHomePage> {
 class VentanaBusqueda extends StatelessWidget {
 
   final RecipeBlock? block;
-
   const VentanaBusqueda({super.key, required this.block});
 
   @override

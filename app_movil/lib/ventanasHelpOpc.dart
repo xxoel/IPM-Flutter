@@ -61,27 +61,40 @@ class VentanaOpciones extends StatelessWidget {
           foregroundColor: Colors.black87,
           title: const Text('VentanaOpciones'),
         ),
-        body: Center(
-            child:Column(
-              children: [const TextField(
-                  textAlign: TextAlign.center,
-                  enabled: false,
-                  style: TextStyle(color:Colors.white,fontSize: 22,height: 2.0),
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Bienvenido a la pestaña de Opciones'
-                  )
-              )
+        body: DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.lightBlueAccent,
+              border: Border.all(
+                        color: Colors.black87,
+                        width: 10,),
+              gradient: const LinearGradient(
+                colors: [Colors.white10,Colors.black26]),
+            image: const DecorationImage(image:AssetImage('assets/espaguetis.png'),
+                                         fit: BoxFit.cover),
+            ),
+            child:Expanded(child:Center(
+              child:Column(
+                children: [const TextField(
+                    textAlign: TextAlign.center,
+                    enabled: false,
+                    style: TextStyle(color:Colors.black87,fontSize: 40,height: 2.0),
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                       hintText: 'Bienvenido a la pestaña de Opciones'
+                    )
+                )
                 ,const SizedBox(
                   height: 150,
                 ),
-
                 Image.asset(
                     'assets/PinguinoAjustes.png',
                     width: 250,
                     height: 250,
                     fit: BoxFit.fill),
-                Expanded(
+                const SizedBox(
+                  height: 100,
+                ),
+                SingleChildScrollView(
                     child:Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -89,19 +102,26 @@ class VentanaOpciones extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget> [
                             const SizedBox(
-                              height: 200,
+                              height: 100,
                             ),
-                            const ElevatedButton(
-                                onPressed: null,
-                                child: Text(
-                                    'Cambiar Tema'
+                             ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(Colors.red),
+                                ),
+                                onPressed: (){},
+                                child: const Text(
+                                    'Cambiar Tema',
+                                    style: TextStyle(color: Colors.white),
                                 )),
-                            const ElevatedButton(
-                              onPressed: null,
-                              child: Text(
-                                  'Cambiar Fuente'
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(Colors.blue),
                               ),
-                            ),
+                              onPressed: (){},
+                              child: const Text(
+                                  'Cambiar Fuente',
+                                  style: TextStyle(color: Colors.white),
+                              )),
                             ElevatedButton(
                               onPressed: () {
                                 Navigator.pop(context);
@@ -113,6 +133,6 @@ class VentanaOpciones extends StatelessWidget {
                         ]))],
             )
         )
-    );
+    )));
   }
 }

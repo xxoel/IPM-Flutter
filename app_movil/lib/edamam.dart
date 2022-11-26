@@ -123,7 +123,7 @@ List<String>? parse_list(var list) =>
     list != null ? List<String>.from(list) : null;
 
 Future<RecipeBlock?> search_recipes(String query) async {
-  // TODO: include a search criteria!
+
   var formattedQuery =
       "type=$TYPE&beta=true&app_id=$APP_ID&app_key=$APP_KEY&q=$query";
 
