@@ -61,7 +61,7 @@ class VentanaOpciones extends StatelessWidget {
           foregroundColor: Colors.black87,
           title: const Text('VentanaOpciones'),
         ),
-        body: DecoratedBox(
+        body: SingleChildScrollView(child:DecoratedBox(
             decoration: BoxDecoration(
               color: Colors.lightBlueAccent,
               border: Border.all(
@@ -77,7 +77,7 @@ class VentanaOpciones extends StatelessWidget {
                 children: [const TextField(
                     textAlign: TextAlign.center,
                     enabled: false,
-                    style: TextStyle(color:Colors.black87,fontSize: 40,height: 2.0),
+                    style: TextStyle(color:Colors.black87,fontSize: 20),
                     decoration: InputDecoration(
                         border: OutlineInputBorder(),
                        hintText: 'Bienvenido a la pestaña de Opciones'
@@ -133,6 +133,6 @@ class VentanaOpciones extends StatelessWidget {
                         ]))],
             )
         )
-    )));
+    ))));
   }
 }
