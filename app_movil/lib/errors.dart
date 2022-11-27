@@ -7,38 +7,43 @@ class ErrorServidor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-        child: DecoratedBox(
-          decoration: const BoxDecoration(
-            color: Colors.orange,
-            border: Border(),
-          ),
-          child: Column(
-            children: [
-              Image.asset(
-                  'assets/Segurata.png',
-                  width: 250,
-                  height: 250,
-                  fit: BoxFit.fill),
-              const SizedBox(
-                height: 150,
-              ),
-              const TextField(
-                enabled: false,
-                minLines: 2,
-                maxLines: 2,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Colors.white, fontSize: 22, height: 2.0),
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Ha ocurrido un error de conexión con el servidor o no'
-                        'se ha podido establecer. Espere unos segundos o inténtelo de'
-                        ' nuevo más tarde'
-                ),
-              )
-            ]
+        child:Expanded(child: SingleChildScrollView(
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Image.asset(
+                      'assets/Segurata.png',
+                      width: 250,
+                      height: 250,
+                      fit: BoxFit.fill),
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  const TextField(
+                    minLines: 3,
+                    maxLines: 45,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Colors.black, fontSize: 25, height: 1.0),
+                    decoration: InputDecoration(
+                        disabledBorder: OutlineInputBorder(
+                          borderSide :BorderSide(
+                            color: Colors.deepPurple,
+                            width:5,
+                          ),
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: 'Ha ocurrido un error de conexión con el servidor o no'
+                            'se ha podido establecer. Espere unos segundos o inténtelo de'
+                            ' nuevo más tarde'
+                    ),
+                    enabled: false,
+                  )
+                ]
+            )
         )
-    )
+        )
     );
   }
 }
@@ -50,31 +55,37 @@ class ErrorRed extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-        child: SizedBox(
-        height: 1200,
-        child: DecoratedBox(
-          decoration: const BoxDecoration(
-            color: Colors.cyanAccent,
-            border: Border(),
-        ),
+        child:Expanded(child: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Image.asset(
                   'assets/Segurata.png',
                   width: 250,
                   height: 250,
                   fit: BoxFit.fill),
-              const TextField(
-                enabled: false,
+               const SizedBox(
+                 height: 50,
+               ),
+               const TextField(
+                minLines: 3,
+                maxLines: 45,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: Colors.white, fontSize: 22, height: 2.0),
+                    color: Colors.black, fontSize: 25, height: 1.0),
                 decoration: InputDecoration(
-                    border: OutlineInputBorder(),
+                    disabledBorder: OutlineInputBorder(
+                    borderSide :BorderSide(
+                      color: Colors.deepPurple,
+                      width:5,
+                      ),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
                     hintText: 'Error de red: No se ha podido establecer la conexión a internet.'
                         ' Compruebe su conexión a la red o inténtelo de nuevo más tarde.'
                 ),
+                enabled: false,
               )
             ]
         )

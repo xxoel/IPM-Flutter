@@ -81,9 +81,11 @@ class _MyHomePageState extends State<MyHomePage> {
           Padding(
             padding: const EdgeInsets.all(8.0),
            child: TextField(
-                style: const TextStyle(color: Colors.black,fontSize: 30),
-                controller: _text,
+               style: const TextStyle(color: Colors.black,fontSize: 30),
+               controller: _text,
                decoration: InputDecoration(
+                   filled: true,
+                   fillColor: Colors.white,
                    isDense: true,
                    errorText: _validate ? 'EL CAMPO NO PUEDE ESTAR VACIO' : null,
                    labelText: "Introduzca los datos",

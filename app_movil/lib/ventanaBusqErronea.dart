@@ -15,32 +15,45 @@ class VentanaBusquedaNoEncontrada extends StatelessWidget {
               child : SingleChildScrollView(
                   child : Column(
                       children:[const SizedBox(
-                        height: 200,),
+                        height: 100,),
                         Image.asset(
                             'assets/PinguinoPensativo.png',
                             width: 250,
                             height: 250,
                             fit: BoxFit.fill),
                         const SizedBox(
-                          height: 200,
+                          height: 75,
                         ),
                         const TextField(
                           enabled: false,
+                          minLines: 1,
+                          maxLines: 45,
                           textAlign: TextAlign.center,
                           decoration: InputDecoration(
                               border: OutlineInputBorder(),
                               hintText: 'Vaya, su palabra no está relacionada con ninguna receta :('
+
                           ),
+                          style: TextStyle(fontSize: 40),
                         ),
                         const SizedBox(
-                          height: 100,
+                          height: 50,
                         ),
-                        ElevatedButton(
+                        SizedBox(
+                          height:75,
+                          width: 200,
+                          child :ElevatedButton(
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child:const Text('Volver'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              side: const BorderSide(width:5, color:Colors.deepPurple),
+                              padding: const EdgeInsets.all(20),
+                            ),
+                          child:const Text('Volver',style: TextStyle(fontSize: 35,color: Colors.black,),)
                         ),
+                        )
                       ]
                   )
               )),

@@ -9,22 +9,21 @@ class VentanaAyuda extends StatelessWidget {
       appBar: AppBar(
         title: const Text('VentanaAyuda'),
       ),
-      body: Center(
+      body:Center(
           child:
           Container(
-              color: Colors.white,
+              color: Colors.white30,
               child:
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+              SingleChildScrollView(child:Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(
-                    height: 300,
+                    height: 100,
                   ),
-                  const Expanded(
-                      child: SingleChildScrollView(child: TextField(
+                  const TextField(
                         enabled: false,
-                        maxLines: 6,
-                        minLines: 6,
+                        maxLines: 40,
+                        minLines: 1,
                         style: TextStyle(color:Colors.white,fontSize: 22,height: 2.0),
                         decoration: InputDecoration(
                             border: OutlineInputBorder(),
@@ -34,9 +33,7 @@ class VentanaAyuda extends StatelessWidget {
                                 'El sistema se encargará de mostrarte las recetas que contienen esa palabra clave, o el error '
                                 'correspondiente. !Muchas gracias por usar nuestra aplicación!'
                         ),
-                      )
-                      )
-                  ),
+                      ),
                   ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context);
@@ -46,7 +43,7 @@ class VentanaAyuda extends StatelessWidget {
                 ],
               ))
       ),
-    )
+    ))
     ;
   }
 }
@@ -61,7 +58,7 @@ class VentanaOpciones extends StatelessWidget {
           foregroundColor: Colors.black87,
           title: const Text('VentanaOpciones'),
         ),
-        body: SingleChildScrollView(child:DecoratedBox(
+        body: SingleChildScrollView(child:Center(child:DecoratedBox(
             decoration: BoxDecoration(
               color: Colors.lightBlueAccent,
               border: Border.all(
@@ -72,19 +69,20 @@ class VentanaOpciones extends StatelessWidget {
             image: const DecorationImage(image:AssetImage('assets/espaguetis.png'),
                                          fit: BoxFit.cover),
             ),
-            child:Expanded(child:Center(
               child:Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisSize: MainAxisSize.max,
                 children: [const TextField(
                     textAlign: TextAlign.center,
                     enabled: false,
-                    style: TextStyle(color:Colors.black87,fontSize: 20),
+                    style: TextStyle(color:Colors.black87,fontSize: 25),
                     decoration: InputDecoration(
                         border: OutlineInputBorder(),
                        hintText: 'Bienvenido a la pestaña de Opciones'
                     )
                 )
                 ,const SizedBox(
-                  height: 150,
+                  height: 100,
                 ),
                 Image.asset(
                     'assets/PinguinoAjustes.png',
@@ -92,7 +90,7 @@ class VentanaOpciones extends StatelessWidget {
                     height: 250,
                     fit: BoxFit.fill),
                 const SizedBox(
-                  height: 100,
+                  height: 50,
                 ),
                 SingleChildScrollView(
                     child:Row(
@@ -130,9 +128,9 @@ class VentanaOpciones extends StatelessWidget {
                             )
                           ],
                         ),
-                        ]))],
+                        ])),],
             )
         )
-    ))));
+    )));
   }
 }
