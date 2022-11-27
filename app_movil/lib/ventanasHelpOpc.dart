@@ -20,7 +20,7 @@ class VentanaAyuda extends StatelessWidget {
                   const SizedBox(
                     height: 100,
                   ),
-                  const TextField(
+                  Theme(data:ThemeData(disabledColor: Colors.black87),child: const TextField(
                         enabled: false,
                         maxLines: 40,
                         minLines: 1,
@@ -33,7 +33,7 @@ class VentanaAyuda extends StatelessWidget {
                                 'El sistema se encargará de mostrarte las recetas que contienen esa palabra clave, o el error '
                                 'correspondiente. !Muchas gracias por usar nuestra aplicación!'
                         ),
-                      ),
+                  )),
                   ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context);
@@ -54,11 +54,12 @@ class VentanaOpciones extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           foregroundColor: Colors.black87,
           title: const Text('VentanaOpciones'),
         ),
-        body: SingleChildScrollView(child:Center(child:DecoratedBox(
+        body: DecoratedBox(
             decoration: BoxDecoration(
               color: Colors.lightBlueAccent,
               border: Border.all(
@@ -69,18 +70,18 @@ class VentanaOpciones extends StatelessWidget {
             image: const DecorationImage(image:AssetImage('assets/espaguetis.png'),
                                          fit: BoxFit.cover),
             ),
-              child:Column(
+              child:Center(child:SingleChildScrollView(child:Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 mainAxisSize: MainAxisSize.max,
-                children: [const TextField(
+                children: [Theme(data: ThemeData(disabledColor: Colors.black),child: const TextField(
                     textAlign: TextAlign.center,
                     enabled: false,
-                    style: TextStyle(color:Colors.black87,fontSize: 25),
+                    style: TextStyle(color:Colors.red,fontSize: 33),
                     decoration: InputDecoration(
                         border: OutlineInputBorder(),
                        hintText: 'Bienvenido a la pestaña de Opciones'
                     )
-                )
+                ))
                 ,const SizedBox(
                   height: 100,
                 ),
@@ -92,8 +93,7 @@ class VentanaOpciones extends StatelessWidget {
                 const SizedBox(
                   height: 50,
                 ),
-                SingleChildScrollView(
-                    child:Row(
+                Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [ButtonBar(
@@ -128,7 +128,7 @@ class VentanaOpciones extends StatelessWidget {
                             )
                           ],
                         ),
-                        ])),],
+                        ]),],
             )
         )
     )));

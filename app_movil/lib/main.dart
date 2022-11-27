@@ -103,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
                          setState(() {});
                        }),
                    border: const OutlineInputBorder(
-                       borderSide: BorderSide(color: Colors.black),
+                       borderSide: BorderSide(color: Colors.deepPurple),
                        borderRadius: BorderRadius.all(
                          Radius.circular(15.0),
                        )
@@ -164,7 +164,6 @@ class _MyHomePageState extends State<MyHomePage> {
         image: const DecorationImage(image:AssetImage('assets/food.png'),
             fit: BoxFit.cover),),
           child: Center(
-          child:Expanded(
             child: SingleChildScrollView(
               child: isOffline !=0 ? Column(
                 children: [isOffline == 1 ?  const ErrorServidor() : const ErrorRed()]
@@ -173,7 +172,6 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [searchBar,buttonSection]
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
-    )
     )
     )
     );
