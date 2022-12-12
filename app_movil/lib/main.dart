@@ -97,10 +97,26 @@ class _MyHomePageState extends State<MyHomePage> {
                      },
                    ),
                    suffixIcon: IconButton(
-                       icon: const Icon(Icons.clear),
+                       icon: const Icon(Icons.search,key: Key('K'),),
                        onPressed: () {
-                         _text.clear();
-                         setState(() {});
+                         setState(() {
+                           _text.text.isEmpty ? _validate = true : _validate = false;
+                           if (!_validate) {
+                             search_recipes(_text.text).then((value) {
+                               if (value?.count == 0) {
+                                 Navigator.push(context, MaterialPageRoute(builder: (
+                                     context) => const VentanaBusquedaNoEncontrada()));
+                               }
+                               else {
+                                 Navigator.push(context, MaterialPageRoute(
+                                     builder: (context) =>
+                                         VentanaBusqueda(block: value)),);
+                               }
+                             },
+                             );
+                           }
+                         }
+                         );
                        }),
                    border: const OutlineInputBorder(
                        borderSide: BorderSide(color: Colors.deepPurple),

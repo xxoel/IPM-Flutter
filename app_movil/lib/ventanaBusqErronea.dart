@@ -34,6 +34,7 @@ class VentanaBusquedaNoEncontrada extends StatelessWidget {
 
                     )),
                     const TextField(
+                      key: Key('L'),
                       enabled: false,
                       minLines: 1,
                       maxLines: 45,
