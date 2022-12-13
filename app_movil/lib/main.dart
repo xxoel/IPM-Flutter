@@ -212,6 +212,7 @@ class VentanaBusqueda extends StatelessWidget {
                   children: [
                     for(var recipe in block!.recipes!)
                       Ink.image(
+                          key: Key('${recipe.label}'),
                           width: double.infinity,
                           height: 240,
                           fit: BoxFit.cover,
