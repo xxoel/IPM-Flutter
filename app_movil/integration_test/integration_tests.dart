@@ -66,4 +66,13 @@ void main(){
       expect(find.byType(ElevatedButton), findsOneWidget);
     });
   });
+  group('Tests de error de red', () {
+    testWidgets('Test de error de Red', (WidgetTester tester) async{
+      app.main();
+      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(const Duration(seconds: 10));
+      expect(find.text('Error de red: No se ha podido establecer la conexión a internet.'
+          ' Compruebe su conexión a la red o inténtelo de nuevo más tarde.'), findsOneWidget);
+    });
+  });
 }
