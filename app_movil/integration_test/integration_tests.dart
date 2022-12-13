@@ -5,15 +5,13 @@ import 'package:app_movil/main.dart' as app;
 
 void main(){
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-  const barraBusquedaInicio = Key('K');
-  group('Tests de Busqueda', ()
-  {
+  group('Tests de Busqueda', () {
     testWidgets(
         'Ventana de busqueda erronea bien hecha', (WidgetTester tester) async {
       app.main();
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField), 'jajajajaja');
-      await tester.tap(find.byKey(barraBusquedaInicio));
+      await tester.tap(find.byIcon(Icons.search));
       await tester.pumpAndSettle();
       await tester.testTextInput.receiveAction(TextInputAction.done);
       await tester.pumpAndSettle(const Duration(seconds: 3));
@@ -26,7 +24,7 @@ void main(){
       app.main();
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField), 'tomato');
-      await tester.tap(find.byKey(barraBusquedaInicio));
+      await tester.tap(find.byIcon(Icons.search));
       await tester.pumpAndSettle();
       await tester.testTextInput.receiveAction(TextInputAction.done);
       await tester.pumpAndSettle(const Duration(seconds: 5));
