@@ -243,21 +243,26 @@ class VentanaBusqueda extends StatelessWidget {
                       onPressed: () {
                         if (block?.nextBlock != null) {
                           own_search_recipes(block!.nextBlock!).then((data) {
-                            Navigator.pushReplacement(
+                            Navigator.push(
                               context, MaterialPageRoute(
                                 builder: (context) =>
                                     VentanaBusqueda(block: data)),);
                           });
                         }
                       },
-                      child: const Text('Siguiente página'),
+                      child: const Text('Página siguiente'),
                     ),
                     ElevatedButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: const Text('Volver'),
+                      child: const Text('Página anterior'),
                     ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.popUntil(context, (Route<dynamic> predicate) => predicate.isFirst);},
+                      child: const Text('Menú principal'),
+                    )
                   ],
                 ),
               )
