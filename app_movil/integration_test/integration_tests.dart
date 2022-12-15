@@ -20,7 +20,7 @@ void main(){
     });
     testWidgets(
         'Ventana de busqueda correcta bien hecha', (WidgetTester tester) async {
-      const infoDetallada = Key('Tomato Gravy');
+      const infoDetallada = Key('http://www.seriouseats.com/recipes/2013/01/sauced-tomato-gravy-recipe.html');
       app.main();
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField), 'tomato');

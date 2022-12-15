@@ -97,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
                      },
                    ),
                    suffixIcon: IconButton(
-                       icon: const Icon(Icons.search,key: Key('K'),),
+                       icon: const Icon(Icons.search),
                        onPressed: () {
                          setState(() {
                            _text.text.isEmpty ? _validate = true : _validate = false;
@@ -112,11 +112,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                      builder: (context) =>
                                          VentanaBusqueda(block: value)),);
                                }
-                             },
-                             );
+                             },);
                            }
-                         }
-                         );
+                         });
                        }),
                    border: const OutlineInputBorder(
                        borderSide: BorderSide(color: Colors.deepPurple),
@@ -139,11 +137,9 @@ class _MyHomePageState extends State<MyHomePage> {
                               builder: (context) =>
                                   VentanaBusqueda(block: value)),);
                         }
-                      },
-                      );
+                      },);
                     }
-                  }
-                  );
+                  });
                },
             ),
          )
@@ -212,7 +208,7 @@ class VentanaBusqueda extends StatelessWidget {
                   children: [
                     for(var recipe in block!.recipes!)
                       Ink.image(
-                          key: Key('${recipe.label}'),
+                          key: Key('${recipe.sourceUrl}'),
                           width: double.infinity,
                           height: 240,
                           fit: BoxFit.cover,
