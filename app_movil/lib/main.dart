@@ -239,6 +239,9 @@ class VentanaBusqueda extends StatelessWidget {
                                 )
                               ],),
                           )),
+                    ButtonBar(
+                      mainAxisSize: MainAxisSize.min,
+                      children:[
                     ElevatedButton(
                       onPressed: () {
                         if (block?.nextBlock != null) {
@@ -265,7 +268,7 @@ class VentanaBusqueda extends StatelessWidget {
                     )
                   ],
                 ),
-              )
+              ]))
           )
       );
     }

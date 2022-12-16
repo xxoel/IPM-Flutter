@@ -14,7 +14,7 @@ void main(){
       await tester.tap(find.byIcon(Icons.search));
       await tester.pumpAndSettle();
       await tester.testTextInput.receiveAction(TextInputAction.done);
-      await tester.pumpAndSettle(const Duration(seconds: 3));
+      await tester.pumpAndSettle(const Duration(seconds: 2));
       expect(find.text('Su palabra no está relacionada con ninguna receta :('),
           findsOneWidget);
     });
@@ -66,7 +66,7 @@ void main(){
       expect(find.byType(ElevatedButton), findsOneWidget);
     });
   });
-  group('Tests de error de red', () {
+  /*group('Tests de error de red', () {
     testWidgets('Test de error de Red', (WidgetTester tester) async{
       app.main();
       await tester.pumpAndSettle();
@@ -74,13 +74,13 @@ void main(){
       expect(find.text('Error de red: No se ha podido establecer la conexión a internet.'
           ' Compruebe su conexión a la red o inténtelo de nuevo más tarde.'), findsOneWidget);
     });
-    /*testWidgets('Test de error de Server', (WidgetTester tester) async {
+    testWidgets('Test de error de Server', (WidgetTester tester) async {
       app.main();
       await tester.pumpAndSettle();
       await tester.pumpAndSettle(const Duration(seconds: 10));
       expect(find.text('Ha ocurrido un error de conexión con el servidor o no '
           'se ha podido establecer. Espere unos segundos o inténtelo de'
           ' nuevo más tarde'), findsOneWidget);
-    });*/
-  });
+    });
+  });*/
 }
